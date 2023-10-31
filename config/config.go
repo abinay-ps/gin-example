@@ -8,11 +8,12 @@ import (
 )
 
 var (
-	dbHost string
-	dbPort string
-	dbUser string
-	dbPass string
-	dbName string
+	dbHost   string
+	dbPort   string
+	dbUser   string
+	dbPass   string
+	dbName   string
+	httpPort string
 )
 
 func Load() {
@@ -24,8 +25,18 @@ func Load() {
 	dbUser = os.Getenv("DB_USER")
 	dbPass = os.Getenv("DB_PASS")
 	dbName = os.Getenv("DB_NAME")
+	httpPort = os.Getenv("HTTP_PORT")
 }
 
 func GetDbDetails() string {
-	return "host=dbHost port=dbHost user=dbUser password=dbPass dbname=dbName sslmode=disabled"
+	return "host=dbHost port=dbHost user=dbUser password=dbPass dbname=dbName sslmode=disable"
+
+	//	db, err := sql.Open("postgres", "host=localhost port=5432 user=postgres password=12345 dbname=ScheduleManagement sslmode=disable")
+}
+
+func GetPort() string {
+	if httpPort == "" {
+		return ":8080" //Default Port
+	}
+	return ":" + httpPort
 }

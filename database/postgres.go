@@ -10,7 +10,7 @@ import (
 
 func Connect() *sql.DB {
 	//Connect to the database
-	db, err := sql.Open("postsgres", config.GetDbDetails())
+	db, err := sql.Open("postgres", config.GetDbDetails())
 
 	if err != nil {
 		log.Fatal("Database connection failed")

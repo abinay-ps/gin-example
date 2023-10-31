@@ -20,4 +20,5 @@ func main() {
 	//Initialize routes
 	handlers.Iniatilize_routes(router, db)
 
+	router.Run(config.GetPort())
 }
