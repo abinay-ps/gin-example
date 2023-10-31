@@ -1,6 +1,7 @@
 package config
 
 import (
+	"fmt"
 	"log"
 	"os"
 
@@ -26,6 +27,7 @@ func Load() {
 	dbPass = os.Getenv("DB_PASS")
 	dbName = os.Getenv("DB_NAME")
 	httpPort = os.Getenv("HTTP_PORT")
+	fmt.Println("Environment variables loaded successfully")
 }
 
 func GetDbDetails() string {

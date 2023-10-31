@@ -21,7 +21,7 @@ func Connect() *sql.DB {
 		log.Fatal("Database Ping failed")
 	}
 
-	fmt.Printf("Database connection is successful")
+	fmt.Println("Database connection is successful")
 
 	_, err = db.Exec("CREATE TABLE IF NOT EXISTS movies (id INTEGER PRIMARY KEY, title TEXT, director TEXT)")
 	if err != nil {
