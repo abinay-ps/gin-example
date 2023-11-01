@@ -17,7 +17,7 @@ var (
 	httpPort string
 )
 
-func Load() {
+func GetDbDetails() string {
 	if err := godotenv.Load(); err != nil {
 		log.Fatal("Error loading .env file")
 	}
@@ -26,18 +26,18 @@ func Load() {
 	dbUser = os.Getenv("DB_USER")
 	dbPass = os.Getenv("DB_PASS")
 	dbName = os.Getenv("DB_NAME")
-	httpPort = os.Getenv("HTTP_PORT")
+
 	fmt.Println("Environment variables loaded successfully")
-
-}
-
-func GetDbDetails() string {
-	return "host=dbHost port=dbHost user=dbUser password=dbPass dbname=dbName sslmode=disable"
-
-	//	db, err := sql.Open("postgres", "host=localhost port=5432 user=postgres password=12345 dbname=ScheduleManagement sslmode=disable")
+	fmt.Println(dbHost, dbPort, dbUser, dbPass, dbName)
+	str := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", dbHost, dbPort, dbUser, dbPass, dbName)
+	return str
 }
 
 func GetPort() string {
+	if err := godotenv.Load(); err != nil {
+		log.Fatal("Error loading .env file")
+	}
+	httpPort = os.Getenv("HTTP_PORT")
 	if httpPort == "" {
 		return ":8080" //Default Port
 	}

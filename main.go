@@ -8,8 +8,7 @@ import (
 )
 
 func main() {
-	//Load all configarations
-	config.Load()
+
 	//connect to the database
 	db := database.Connect()
 

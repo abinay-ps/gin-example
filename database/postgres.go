@@ -6,12 +6,10 @@ import (
 	"log"
 
 	"github.com/abinay-ps/gin-example/config"
+	_ "github.com/lib/pq"
 )
 
 func Connect() *sql.DB {
-	//Load all configarations
-	config.Load()
-
 	//Connect to the database
 	db, err := sql.Open("postgres", config.GetDbDetails())
 
