@@ -45,31 +45,55 @@ func getMovieDetails(db *sql.DB) gin.HandlerFunc {
 					switch key {
 					case "id":
 						query := "Select * from movies where id=$1"
-						var movie models.Movie
-						err := db.QueryRow(query, value).Scan(&movie.ID, &movie.Title, &movie.Director)
-						if err == sql.ErrNoRows {
-							c.JSON(http.StatusInternalServerError, gin.H{"Message": "No rows returned"})
+						rows, err := db.Query(query, value)
+						if err != nil {
+							c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 							return
 						}
-						c.JSON(http.StatusOK, movie)
+						var movielist []models.Movie
+						for rows.Next() {
+							var movie models.Movie
+							if err := rows.Scan(&movie.ID, &movie.Title, &movie.Director); err != nil {
+								c.JSON(http.StatusInternalServerError, err.Error())
+							} else {
+								movielist = append(movielist, movie)
+							}
+						}
+						c.JSON(http.StatusOK, movielist)
 					case "title":
 						query := "Select * from movies where title=$1"
-						var movie models.Movie
-						err := db.QueryRow(query, value).Scan(&movie.ID, &movie.Title, &movie.Director)
-						if err == sql.ErrNoRows {
-							c.JSON(http.StatusInternalServerError, gin.H{"Message": "No rows returned"})
+						rows, err := db.Query(query, value)
+						if err != nil {
+							c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 							return
 						}
-						c.JSON(http.StatusOK, movie)
+						var movielist []models.Movie
+						for rows.Next() {
+							var movie models.Movie
+							if err := rows.Scan(&movie.ID, &movie.Title, &movie.Director); err != nil {
+								c.JSON(http.StatusInternalServerError, err.Error())
+							} else {
+								movielist = append(movielist, movie)
+							}
+						}
+						c.JSON(http.StatusOK, movielist)
 					case "director":
 						query := "Select * from movies where director=$1"
-						var movie models.Movie
-						err := db.QueryRow(query, value).Scan(&movie.ID, &movie.Title, &movie.Director)
-						if err == sql.ErrNoRows {
-							c.JSON(http.StatusInternalServerError, gin.H{"Message": "No rows returned"})
+						rows, err := db.Query(query, value)
+						if err != nil {
+							c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 							return
 						}
-						c.JSON(http.StatusOK, movie)
+						var movielist []models.Movie
+						for rows.Next() {
+							var movie models.Movie
+							if err := rows.Scan(&movie.ID, &movie.Title, &movie.Director); err != nil {
+								c.JSON(http.StatusInternalServerError, err.Error())
+							} else {
+								movielist = append(movielist, movie)
+							}
+						}
+						c.JSON(http.StatusOK, movielist)
 					default:
 						c.JSON(400, gin.H{"message": "No query parameters"})
 					}
