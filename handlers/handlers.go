@@ -9,33 +9,73 @@ import (
 )
 
 func Iniatilize_routes(router *gin.Engine, db *sql.DB) {
-	router.GET("/movies", getAllMovies(db))
+	router.GET("/movies", getMovieDetails(db))
 	router.POST("/movies", createMovie(db))
 	router.GET("/movies/:id", getMovieById(db))
 	router.PUT("/movies/:id", updateMovieById(db))
 	router.DELETE("/movies/:id", deleteMovieById(db))
 }
 
-func getAllMovies(db *sql.DB) gin.HandlerFunc {
+func getMovieDetails(db *sql.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		query := "Select * from movies"
+		query_Param := c.Request.URL.Query()
 
-		rows, err := db.Query(query)
+		if len(query_Param) == 0 {
+			query := "Select * from movies"
 
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-			return
-		}
-		var movielist []models.Movie
-		for rows.Next() {
-			var movie models.Movie
-			if err := rows.Scan(&movie.ID, &movie.Title, &movie.Director); err != nil {
-				c.JSON(http.StatusInternalServerError, err.Error())
-			} else {
-				movielist = append(movielist, movie)
+			rows, err := db.Query(query)
+
+			if err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+				return
+			}
+			var movielist []models.Movie
+			for rows.Next() {
+				var movie models.Movie
+				if err := rows.Scan(&movie.ID, &movie.Title, &movie.Director); err != nil {
+					c.JSON(http.StatusInternalServerError, err.Error())
+				} else {
+					movielist = append(movielist, movie)
+				}
+			}
+			c.JSON(http.StatusOK, movielist)
+		} else {
+			for key, values := range query_Param {
+				for _, value := range values {
+					switch key {
+					case "id":
+						query := "Select * from movies where id=$1"
+						var movie models.Movie
+						err := db.QueryRow(query, value).Scan(&movie.ID, &movie.Title, &movie.Director)
+						if err == sql.ErrNoRows {
+							c.JSON(http.StatusInternalServerError, gin.H{"Message": "No rows returned"})
+							return
+						}
+						c.JSON(http.StatusOK, movie)
+					case "title":
+						query := "Select * from movies where title=$1"
+						var movie models.Movie
+						err := db.QueryRow(query, value).Scan(&movie.ID, &movie.Title, &movie.Director)
+						if err == sql.ErrNoRows {
+							c.JSON(http.StatusInternalServerError, gin.H{"Message": "No rows returned"})
+							return
+						}
+						c.JSON(http.StatusOK, movie)
+					case "director":
+						query := "Select * from movies where director=$1"
+						var movie models.Movie
+						err := db.QueryRow(query, value).Scan(&movie.ID, &movie.Title, &movie.Director)
+						if err == sql.ErrNoRows {
+							c.JSON(http.StatusInternalServerError, gin.H{"Message": "No rows returned"})
+							return
+						}
+						c.JSON(http.StatusOK, movie)
+					default:
+						c.JSON(400, gin.H{"message": "No query parameters"})
+					}
+				}
 			}
 		}
-		c.JSON(http.StatusOK, movielist)
 	}
 }
 
