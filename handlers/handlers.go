@@ -45,55 +45,16 @@ func getMovieDetails(db *sql.DB) gin.HandlerFunc {
 					switch key {
 					case "id":
 						query := "Select * from movies where id=$1"
-						rows, err := db.Query(query, value)
-						if err != nil {
-							c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-							return
-						}
-						var movielist []models.Movie
-						for rows.Next() {
-							var movie models.Movie
-							if err := rows.Scan(&movie.ID, &movie.Title, &movie.Director); err != nil {
-								c.JSON(http.StatusInternalServerError, err.Error())
-							} else {
-								movielist = append(movielist, movie)
-							}
-						}
-						c.JSON(http.StatusOK, movielist)
+						query_function(db, query, c, value)
+
 					case "title":
 						query := "Select * from movies where title=$1"
-						rows, err := db.Query(query, value)
-						if err != nil {
-							c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-							return
-						}
-						var movielist []models.Movie
-						for rows.Next() {
-							var movie models.Movie
-							if err := rows.Scan(&movie.ID, &movie.Title, &movie.Director); err != nil {
-								c.JSON(http.StatusInternalServerError, err.Error())
-							} else {
-								movielist = append(movielist, movie)
-							}
-						}
-						c.JSON(http.StatusOK, movielist)
+						query_function(db, query, c, value)
+
 					case "director":
 						query := "Select * from movies where director=$1"
-						rows, err := db.Query(query, value)
-						if err != nil {
-							c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-							return
-						}
-						var movielist []models.Movie
-						for rows.Next() {
-							var movie models.Movie
-							if err := rows.Scan(&movie.ID, &movie.Title, &movie.Director); err != nil {
-								c.JSON(http.StatusInternalServerError, err.Error())
-							} else {
-								movielist = append(movielist, movie)
-							}
-						}
-						c.JSON(http.StatusOK, movielist)
+						query_function(db, query, c, value)
+
 					default:
 						c.JSON(400, gin.H{"message": "No query parameters"})
 					}
@@ -180,4 +141,22 @@ func deleteMovieById(db *sql.DB) gin.HandlerFunc {
 		}
 		c.JSON(http.StatusOK, gin.H{"Message": "Row is deleted successfully"})
 	}
+}
+
+func query_function(db *sql.DB, query string, c *gin.Context, value any) {
+	rows, err := db.Query(query, value)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	var movielist []models.Movie
+	for rows.Next() {
+		var movie models.Movie
+		if err := rows.Scan(&movie.ID, &movie.Title, &movie.Director); err != nil {
+			c.JSON(http.StatusInternalServerError, err.Error())
+		} else {
+			movielist = append(movielist, movie)
+		}
+	}
+	c.JSON(http.StatusOK, movielist)
 }
